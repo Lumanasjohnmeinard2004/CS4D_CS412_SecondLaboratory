@@ -1,40 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Adaptive Coding System Prototype</title>
+
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+
+    :root {
+      --body-bg: #f0f2f5;
+      --container-bg: #ffffff;
+      --header-bg: #1e293b;
+      --header-text: #ffffff;
+
+      --editor-bg: #f8fafc;
+      --editor-text: #1a1a1a;
+
+      --side-bg: #f8fafc;
+      --border: #e2e8f0;
+
+      --text: #1a1a1a;
+      --muted: #64748b;
+
+      --feedback-bg: #f1f5f9;
+      --feedback-border: #94a3b8;
+
+      --detailed-bg: #eff6ff;
+      --detailed-border: #3b82f6;
+
+      --hint-bg: #fefce8;
+      --hint-border: #fde047;
+
+      --response-bg: #ffffff;
+
+      --button: #3b82f6;
+      --button-hover: #2563eb;
+
+      --secondary: #64748b;
+      --secondary-hover: #475569;
+
+      --footer-bg: #f1f5f9;
+    }
+
+    body.dark {
+      --body-bg: #0f172a;
+      --container-bg: #111827;
+      --header-bg: #020617;
+
+      --editor-bg: #1e293b;
+      --editor-text: #f8fafc;
+
+      --side-bg: #172033;
+      --border: #334155;
+
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+
+      --feedback-bg: #1e293b;
+      --feedback-border: #64748b;
+
+      --detailed-bg: #172554;
+      --detailed-border: #3b82f6;
+
+      --hint-bg: #422006;
+      --hint-border: #ca8a04;
+
+      --response-bg: #1e293b;
+
+      --footer-bg: #020617;
     }
 
     body {
-      background: #f0f2f5;
-      color: #1a1a1a;
+      background: var(--body-bg);
+      color: var(--text);
       line-height: 1.5;
       padding: 20px;
+      transition: background 0.25s, color 0.25s;
     }
 
     .container {
-      max-width: 900px;
+      max-width: 1050px;
       margin: 0 auto;
-      background: white;
+      background: var(--container-bg);
       border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
       overflow: hidden;
     }
 
     header {
-      background: #1e293b;
-      color: white;
+      background: var(--header-bg);
+      color: var(--header-text);
       padding: 18px 24px;
+
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
     }
 
     header h1 {
@@ -42,43 +112,62 @@
       font-weight: 600;
     }
 
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
     .profile-selector {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .profile-selector label {
       font-size: 0.9rem;
-      opacity: 0.9;
     }
 
     select {
-      padding: 6px 12px;
+      padding: 7px 12px;
       border-radius: 6px;
       border: none;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       background: #334155;
       color: white;
       cursor: pointer;
     }
 
+    .theme-btn {
+      border: 1px solid #64748b;
+      background: transparent;
+      color: white;
+      padding: 7px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .theme-btn:hover {
+      background: #334155;
+    }
+
     .main {
       display: grid;
-      grid-template-columns: 1fr 280px;
-      gap: 0;
-      min-height: 500px;
+      grid-template-columns: minmax(0, 1fr) 330px;
+      min-height: 570px;
     }
 
     .editor-section {
       padding: 20px;
-      border-right: 1px solid #e2e8f0;
+      border-right: 1px solid var(--border);
     }
 
     .section-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #64748b;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 10px;
@@ -86,14 +175,20 @@
 
     #codeEditor {
       width: 100%;
-      height: 220px;
+      height: 260px;
       padding: 14px;
+
       border: 1px solid #cbd5e1;
       border-radius: 8px;
-      font-family: 'Cascadia Code', 'Fira Code', monospace;
+
+      font-family: "Cascadia Code", "Fira Code", monospace;
       font-size: 14px;
+
       resize: vertical;
-      background: #f8fafc;
+
+      background: var(--editor-bg);
+      color: var(--editor-text);
+
       line-height: 1.5;
     }
 
@@ -102,33 +197,69 @@
       border-color: transparent;
     }
 
+    .editor-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .small-btn {
+      border: none;
+      border-radius: 6px;
+      padding: 7px 12px;
+      cursor: pointer;
+
+      background: var(--secondary);
+      color: white;
+
+      font-size: 0.82rem;
+    }
+
+    .small-btn:hover {
+      background: var(--secondary-hover);
+    }
+
     .feedback-area {
-      margin-top: 16px;
+      margin-top: 8px;
       padding: 12px 14px;
+
       border-radius: 8px;
-      background: #f1f5f9;
-      border-left: 4px solid #94a3b8;
+
+      background: var(--feedback-bg);
+      border-left: 4px solid var(--feedback-border);
+
       font-size: 0.9rem;
       min-height: 60px;
     }
 
     .feedback-area.detailed {
-      border-left-color: #3b82f6;
-      background: #eff6ff;
+      border-left-color: var(--detailed-border);
+      background: var(--detailed-bg);
     }
 
     .feedback-area.error {
       border-left-color: #ef4444;
       background: #fef2f2;
+      color: #7f1d1d;
+    }
+
+    body.dark .feedback-area.error {
+      background: #450a0a;
+      color: #fecaca;
     }
 
     .hints {
       margin-top: 14px;
       padding: 12px 14px;
-      background: #fefce8;
+
+      background: var(--hint-bg);
+
       border-radius: 8px;
-      border: 1px solid #fde047;
+      border: 1px solid var(--hint-border);
+
       font-size: 0.9rem;
+
       display: none;
     }
 
@@ -138,13 +269,13 @@
 
     .side-panel {
       padding: 20px;
-      background: #f8fafc;
+      background: var(--side-bg);
     }
 
     .ai-panel {
       display: none;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .ai-panel.visible {
@@ -154,40 +285,59 @@
     .ai-panel h3 {
       font-size: 0.95rem;
       margin-bottom: 4px;
-      color: #1e293b;
+    }
+
+    .ai-description {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 5px;
+    }
+
+    .ai-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
     }
 
     .ai-btn {
-      padding: 10px 14px;
+      padding: 9px 10px;
+
       border: none;
-      border-radius: 8px;
-      background: #3b82f6;
+      border-radius: 7px;
+
+      background: var(--button);
       color: white;
-      font-size: 0.9rem;
+
+      font-size: 0.85rem;
+
       cursor: pointer;
-      transition: background 0.2s;
-      text-align: left;
+
+      text-align: center;
     }
 
     .ai-btn:hover {
-      background: #2563eb;
+      background: var(--button-hover);
     }
 
     .ai-btn.secondary {
-      background: #64748b;
+      background: var(--secondary);
     }
 
     .ai-btn.secondary:hover {
-      background: #475569;
+      background: var(--secondary-hover);
     }
 
     .ai-response {
-      margin-top: 12px;
+      margin-top: 10px;
       padding: 12px;
-      background: white;
+
+      background: var(--response-bg);
+
       border-radius: 8px;
-      border: 1px solid #e2e8f0;
-      font-size: 0.88rem;
+      border: 1px solid var(--border);
+
+      font-size: 0.87rem;
+
       display: none;
     }
 
@@ -195,246 +345,1151 @@
       display: block;
     }
 
-    .user-info {
-      margin-top: 24px;
-      padding-top: 16px;
-      border-top: 1px solid #e2e8f0;
-      font-size: 0.85rem;
-      color: #64748b;
+    .ai-response pre {
+      background: var(--feedback-bg);
+      color: var(--text);
+
+      padding: 8px;
+      border-radius: 4px;
+
+      overflow-x: auto;
+
+      font-family: "Cascadia Code", monospace;
+      font-size: 12px;
+
+      margin-top: 8px;
+      white-space: pre-wrap;
     }
 
-    .user-info strong {
-      color: #1e293b;
+    .user-info {
+      margin-top: 22px;
+      padding-top: 16px;
+
+      border-top: 1px solid var(--border);
+
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .user-info h3 {
+      color: var(--text);
+      font-size: 0.95rem;
+      margin-bottom: 5px;
+    }
+
+    .profile-description {
+      margin-bottom: 10px;
+      line-height: 1.4;
     }
 
     .attribute {
       display: flex;
       justify-content: space-between;
-      margin: 4px 0;
+      gap: 15px;
+
+      padding: 4px 0;
+
+      border-bottom: 1px solid var(--border);
+    }
+
+    .attribute:last-child {
+      border-bottom: none;
+    }
+
+    .attribute strong {
+      color: var(--text);
+      text-align: right;
+      font-weight: 600;
     }
 
     footer {
       padding: 12px 24px;
-      background: #f1f5f9;
+
+      background: var(--footer-bg);
+
       font-size: 0.8rem;
-      color: #64748b;
+      color: var(--muted);
+
       text-align: center;
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 800px) {
       .main {
         grid-template-columns: 1fr;
       }
+
       .editor-section {
         border-right: none;
-        border-bottom: 1px solid #e2e8f0;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+
+    @media (max-width: 500px) {
+      body {
+        padding: 8px;
+      }
+
+      header {
+        align-items: flex-start;
+      }
+
+      .header-controls {
+        width: 100%;
+      }
+
+      .profile-selector {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .ai-buttons {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
+
 <body>
+
   <div class="container">
+
+    <!-- HEADER -->
     <header>
+
       <h1>Adaptive Coding System Prototype</h1>
-      <div class="profile-selector">
-        <label for="profileSelect">User Profile:</label>
-        <select id="profileSelect">
-          <option value="beginner">Profile A – Beginner</option>
-          <option value="experienced">Profile B – Experienced</option>
-        </select>
+
+      <div class="header-controls">
+
+        <div class="profile-selector">
+          <label for="profileSelect">User Profile:</label>
+
+          <select id="profileSelect">
+            <option value="beginner">
+              Profile A – Beginner / Learner
+            </option>
+
+            <option value="experienced">
+              Profile B – Experienced Developer
+            </option>
+          </select>
+        </div>
+
+        <button
+          class="theme-btn"
+          id="themeButton"
+          onclick="toggleTheme()">
+          Dark Mode
+        </button>
+
       </div>
+
     </header>
 
+
     <div class="main">
-      <!-- Left: Editor -->
+
+      <!-- LEFT SIDE -->
       <div class="editor-section">
-        <div class="section-title">Code Editor</div>
-        <textarea id="codeEditor" placeholder="Write your code here..."></textarea>
 
-        <div class="section-title" style="margin-top: 18px;">Feedback</div>
-        <div id="feedback" class="feedback-area">
-          Select a profile and start typing, or click an AI button to see adaptation in action.
+        <div class="section-title">
+          Code Editor
         </div>
 
-        <div id="hints" class="hints">
-          <strong>Tip:</strong> Start with a simple function. Need help understanding something? Use the Explain button on the right.
+        <textarea
+          id="codeEditor"
+          spellcheck="false"
+          placeholder="Write your code here..."></textarea>
+
+        <div class="editor-actions">
+
+          <button
+            class="small-btn"
+            onclick="formatCode()">
+            Format Code
+          </button>
+
+          <button
+            class="small-btn"
+            onclick="clearEditor()">
+            Clear
+          </button>
+
         </div>
+
+
+        <div
+          class="section-title"
+          style="margin-top: 18px;">
+          Feedback
+        </div>
+
+        <div
+          id="feedback"
+          class="feedback-area">
+        </div>
+
+
+        <div
+          id="hints"
+          class="hints">
+
+          <strong>Beginner Tip:</strong>
+
+          Start with a simple function and test one part at a time.
+          If you do not understand your code, use
+          <strong>Explain</strong> or <strong>Learn</strong>.
+
+        </div>
+
       </div>
 
-      <!-- Right: Side Panel -->
+
+      <!-- RIGHT SIDE -->
       <div class="side-panel">
-        <div id="aiPanel" class="ai-panel">
+
+        <!-- AI ASSISTANCE -->
+        <div
+          id="aiPanel"
+          class="ai-panel">
+
           <h3>AI Assistance</h3>
-          <button class="ai-btn" onclick="handleAI('generate')">Generate Code</button>
-          <button class="ai-btn" onclick="handleAI('explain')">Explain Code</button>
-          <button class="ai-btn secondary" onclick="handleAI('fix')">Fix / Suggest</button>
-          <div id="aiResponse" class="ai-response"></div>
+
+          <div
+            id="aiDescription"
+            class="ai-description">
+          </div>
+
+
+          <div class="ai-buttons">
+
+            <button
+              class="ai-btn"
+              onclick="handleAI('generate')">
+              Generate
+            </button>
+
+            <button
+              class="ai-btn"
+              onclick="handleAI('explain')">
+              Explain
+            </button>
+
+            <button
+              class="ai-btn secondary"
+              onclick="handleAI('fix')">
+              Fix
+            </button>
+
+            <button
+              class="ai-btn secondary"
+              onclick="handleAI('improve')">
+              Improve
+            </button>
+
+            <button
+              class="ai-btn"
+              onclick="handleAI('learn')">
+              Learn
+            </button>
+
+            <button
+              class="ai-btn"
+              onclick="handleAI('complete')">
+              Complete
+            </button>
+
+          </div>
+
+
+          <div
+            id="aiResponse"
+            class="ai-response">
+          </div>
+
         </div>
 
+
+        <!-- USER MODEL -->
         <div class="user-info">
-          <strong>Current User Model</strong>
-          <div id="modelDisplay" style="margin-top: 8px;"></div>
+
+          <h3>Current User Model</h3>
+
+          <div
+            id="profileDescription"
+            class="profile-description">
+          </div>
+
+          <div id="modelDisplay"></div>
+
         </div>
+
       </div>
+
     </div>
 
+
     <footer>
-      Prototype demonstrates adaptation based on user model • Not a full IDE
+      Prototype demonstrates adaptation based on a user model.
+      Simulated AI assistance is used for demonstration purposes.
+      This is not a complete IDE.
     </footer>
+
   </div>
 
+
   <script>
-    // ========== USER MODELS ==========
+
+    // =========================================================
+    // USER MODELS
+    // =========================================================
+
     const models = {
+
       beginner: {
-        programming_experience: "Beginner",
-        formatting_assistance: "High",
+
+        profile_name: "Profile A – Beginner / Learner",
+
+        description:
+          "A learner with 0–5 years of programming experience who receives more guidance and detailed assistance.",
+
+        experience_level: "Beginner / Learner",
+
+        years_coding: "0–5 years",
+
+        languages: "Python, JavaScript",
+
+        coding_frequency: "Occasional / Learning",
+
         auto_completion: "High",
+
+        auto_formatting: "High",
+
+        error_detection: "High",
+
         debugging_assistance: "High",
+
         ai_assistance: "High",
+
         guidance_level: "High"
+
       },
+
+
       experienced: {
-        programming_experience: "Experienced",
-        formatting_assistance: "Low",
-        auto_completion: "Low",
-        debugging_assistance: "Moderate",
+
+        profile_name: "Profile B – Experienced Developer",
+
+        description:
+          "An experienced programmer with 10+ years of coding experience who receives concise assistance with fewer beginner prompts.",
+
+        experience_level: "Experienced Professional",
+
+        years_coding: "10+ years",
+
+        languages: "Python, JavaScript, TypeScript, etc.",
+
+        coding_frequency: "Daily",
+
+        auto_completion: "Moderate",
+
+        auto_formatting: "Low",
+
+        error_detection: "Moderate",
+
+        debugging_assistance: "High",
+
         ai_assistance: "High",
+
         guidance_level: "Low"
+
       }
+
     };
 
+
+    let currentProfile = "beginner";
     let currentModel = models.beginner;
 
-    // ========== APPLY ADAPTATION ==========
+
+    // =========================================================
+    // APPLY USER MODEL
+    // =========================================================
+
     function applyAdaptation(profileKey) {
+
+      currentProfile = profileKey;
       currentModel = models[profileKey];
 
-      // 1. Guidance / Hints
-      const hints = document.getElementById("hints");
+
+      const hints =
+        document.getElementById("hints");
+
+      const feedback =
+        document.getElementById("feedback");
+
+      const aiPanel =
+        document.getElementById("aiPanel");
+
+      const aiDescription =
+        document.getElementById("aiDescription");
+
+      const aiResponse =
+        document.getElementById("aiResponse");
+
+
+      // -----------------------------------------
+      // GUIDANCE ADAPTATION
+      // -----------------------------------------
+
       if (currentModel.guidance_level === "High") {
+
         hints.classList.add("visible");
+
       } else {
+
         hints.classList.remove("visible");
+
       }
 
-      // 2. AI Panel visibility
-      const aiPanel = document.getElementById("aiPanel");
+
+      // -----------------------------------------
+      // AI ASSISTANCE
+      // -----------------------------------------
+
       if (currentModel.ai_assistance === "High") {
+
         aiPanel.classList.add("visible");
+
       } else {
+
         aiPanel.classList.remove("visible");
+
       }
 
-      // 3. Feedback style
-      const feedback = document.getElementById("feedback");
+
+      // -----------------------------------------
+      // FEEDBACK ADAPTATION
+      // -----------------------------------------
+
       feedback.className = "feedback-area";
-      if (currentModel.debugging_assistance === "High") {
+
+
+      if (currentProfile === "beginner") {
+
         feedback.classList.add("detailed");
-        feedback.innerHTML = "Detailed feedback mode is active. Errors will include explanations and suggested fixes.";
+
+        feedback.innerHTML =
+          "<strong>Detailed assistance is active.</strong><br>" +
+          "You will receive additional explanations, coding hints, " +
+          "and learning-oriented feedback.";
+
+        aiDescription.innerHTML =
+          "Teaching-style assistance with additional explanations.";
+
       } else {
-        feedback.innerHTML = "Concise feedback mode. Only essential information will be shown.";
+
+        feedback.innerHTML =
+          "<strong>Concise assistance is active.</strong><br>" +
+          "Feedback will focus on essential information.";
+
+        aiDescription.innerHTML =
+          "Short and direct assistance for an experienced developer.";
+
       }
 
-      // 4. Update model display
+
+      // -----------------------------------------
+      // USER MODEL DISPLAY
+      // -----------------------------------------
+
       updateModelDisplay();
 
-      // Clear previous AI response
-      document.getElementById("aiResponse").classList.remove("visible");
-      document.getElementById("aiResponse").innerHTML = "";
+
+      // -----------------------------------------
+      // CLEAR OLD AI RESPONSE
+      // -----------------------------------------
+
+      aiResponse.innerHTML = "";
+      aiResponse.classList.remove("visible");
+
     }
+
+
+
+    // =========================================================
+    // DISPLAY USER MODEL
+    // =========================================================
 
     function updateModelDisplay() {
-      const display = document.getElementById("modelDisplay");
+
+      const display =
+        document.getElementById("modelDisplay");
+
+      const description =
+        document.getElementById("profileDescription");
+
+
+      description.innerHTML =
+        currentModel.description;
+
+
       display.innerHTML = `
-        <div class="attribute"><span>Experience</span><strong>${currentModel.programming_experience}</strong></div>
-        <div class="attribute"><span>Formatting</span><strong>${currentModel.formatting_assistance}</strong></div>
-        <div class="attribute"><span>Auto-completion</span><strong>${currentModel.auto_completion}</strong></div>
-        <div class="attribute"><span>Debugging</span><strong>${currentModel.debugging_assistance}</strong></div>
-        <div class="attribute"><span>AI Assistance</span><strong>${currentModel.ai_assistance}</strong></div>
-        <div class="attribute"><span>Guidance</span><strong>${currentModel.guidance_level}</strong></div>
+
+        <div class="attribute">
+          <span>Experience</span>
+          <strong>${currentModel.experience_level}</strong>
+        </div>
+
+        <div class="attribute">
+          <span>Years Coding</span>
+          <strong>${currentModel.years_coding}</strong>
+        </div>
+
+        <div class="attribute">
+          <span>Languages</span>
+          <strong>${currentModel.languages}</strong>
+        </div>
+
+        <div class="attribute">
+          <span>Coding Frequency</span>
+          <strong>${currentModel.coding_frequency}</strong>
+        </div>
+
+        <div class="attribute">
+          <span>Auto-completion</span>
+          <strong>${currentModel.auto_completion}</strong>
+        </div>
+
+        <div class="attribute">
+          <span>Auto-formatting</span>
+          <strong>${currentModel.auto_formatting}</strong>
+        </div>
+
+        <div class="attribute">
+          <span>Error Detection</span>
+          <strong>${currentModel.error_detection}</strong>
+        </div>
+
+        <div class="attribute">
+          <span>Debugging</span>
+          <strong>${currentModel.debugging_assistance}</strong>
+        </div>
+
+        <div class="attribute">
+          <span>AI Assistance</span>
+          <strong>${currentModel.ai_assistance}</strong>
+        </div>
+
+        <div class="attribute">
+          <span>Guidance</span>
+          <strong>${currentModel.guidance_level}</strong>
+        </div>
+
       `;
+
     }
 
-    // ========== SIMULATED AI RESPONSES ==========
+
+
+    // =========================================================
+    // SIMULATED AI ASSISTANCE
+    // =========================================================
+
     function handleAI(action) {
-      const responseBox = document.getElementById("aiResponse");
-      const code = document.getElementById("codeEditor").value.trim();
+
+      const responseBox =
+        document.getElementById("aiResponse");
+
+      const code =
+        document.getElementById("codeEditor").value.trim();
+
       let message = "";
 
+
+      // =====================================================
+      // GENERATE
+      // =====================================================
+
       if (action === "generate") {
-        if (currentModel.guidance_level === "High") {
-          message = `<strong>Generated example (Beginner-friendly):</strong><br><br>
-<pre style="background:#f1f5f9;padding:8px;border-radius:4px;font-size:13px;">
-def greet(name):
-    """A simple function that greets a person."""
+
+        if (currentProfile === "beginner") {
+
+          message = `
+
+            <strong>Generated Example</strong>
+
+            <pre>def greet(name):
+    """Return a greeting for the given name."""
     return f"Hello, {name}!"
 
-print(greet("World"))
-</pre>
-<p style="margin-top:8px;">This is a basic function. You can modify the name parameter.</p>`;
+print(greet("World"))</pre>
+
+            <p style="margin-top:8px;">
+              This example creates a function named
+              <strong>greet</strong>.
+              The <strong>name</strong> inside the parentheses is
+              the function parameter.
+            </p>
+
+            <p style="margin-top:6px;">
+              The function returns a greeting, and the last line
+              calls the function using "World" as the value.
+            </p>
+
+          `;
+
         } else {
-          message = `<strong>Generated snippet:</strong><br><br>
-<pre style="background:#f1f5f9;padding:8px;border-radius:4px;font-size:13px;">
-def process_data(items: list) -> list:
-    return [x for x in items if x is not None]
-</pre>`;
+
+          message = `
+
+            <strong>Generated Code</strong>
+
+            <pre>def process_data(items: list) -> list:
+    return [x for x in items if x is not None]</pre>
+
+          `;
+
         }
+
       }
+
+
+
+      // =====================================================
+      // EXPLAIN
+      // =====================================================
 
       if (action === "explain") {
+
         if (!code) {
-          message = "Please write some code first so I can explain it.";
-        } else if (currentModel.guidance_level === "High") {
-          message = `<strong>Explanation (detailed):</strong><br><br>
-The code you wrote appears to be a basic structure. 
-In programming, functions help organize code into reusable blocks. 
-Would you like me to break down any specific part?`;
-        } else {
-          message = `<strong>Explanation:</strong><br><br>
-Your code defines a simple structure. No major issues detected.`;
+
+          message =
+            "Write some code in the editor first, then click Explain.";
+
         }
+
+        else if (currentProfile === "beginner") {
+
+          message = `
+
+            <strong>Detailed Explanation</strong>
+
+            <p style="margin-top:8px;">
+              Your code has been submitted for simulated explanation.
+            </p>
+
+            <p style="margin-top:6px;">
+              When reading code, start by identifying variables,
+              functions, conditions, and loops.
+            </p>
+
+            <p style="margin-top:6px;">
+              A function is a reusable block of instructions.
+              Variables store values that your program can use later.
+            </p>
+
+            <p style="margin-top:6px;">
+              This prototype demonstrates how a beginner would receive
+              a longer and more learning-oriented explanation.
+            </p>
+
+          `;
+
+        } else {
+
+          message = `
+
+            <strong>Explanation</strong>
+
+            <p style="margin-top:8px;">
+              Code structure received. Review the control flow,
+              function behavior, inputs, and returned values.
+            </p>
+
+          `;
+
+        }
+
       }
 
+
+
+      // =====================================================
+      // FIX
+      // =====================================================
+
       if (action === "fix") {
-        if (currentModel.debugging_assistance === "High") {
-          message = `<strong>Suggestions (detailed):</strong><br><br>
-• Check indentation – Python is sensitive to it<br>
-• Make sure all parentheses and quotes are closed<br>
-• Consider adding a docstring for clarity<br>
-• Test with a simple input first`;
-        } else {
-          message = `<strong>Suggestions:</strong><br><br>
-• Check syntax and indentation<br>
-• Verify variable names`;
+
+        if (!code) {
+
+          message =
+            "Write some code first so the system can provide suggestions.";
+
         }
+
+        else if (currentProfile === "beginner") {
+
+          message = `
+
+            <strong>Detailed Debugging Suggestions</strong>
+
+            <p style="margin-top:8px;">
+              Check the following:
+            </p>
+
+            <ul style="margin:8px 0 0 20px;">
+              <li>Make sure your indentation is consistent.</li>
+              <li>Check that parentheses and quotation marks are closed.</li>
+              <li>Check whether variables are defined before being used.</li>
+              <li>Test your code using a simple input first.</li>
+            </ul>
+
+            <p style="margin-top:8px;">
+              Python uses indentation to determine which statements
+              belong inside functions, loops, and conditions.
+            </p>
+
+          `;
+
+        } else {
+
+          message = `
+
+            <strong>Debugging Suggestions</strong>
+
+            <ul style="margin:8px 0 0 20px;">
+              <li>Check syntax and indentation.</li>
+              <li>Verify variable scope and names.</li>
+              <li>Check expected inputs and outputs.</li>
+            </ul>
+
+          `;
+
+        }
+
       }
+
+
+
+      // =====================================================
+      // IMPROVE
+      // =====================================================
+
+      if (action === "improve") {
+
+        if (!code) {
+
+          message =
+            "Write some code first so the system can suggest improvements.";
+
+        }
+
+        else if (currentProfile === "beginner") {
+
+          message = `
+
+            <strong>Improvement Suggestions</strong>
+
+            <p style="margin-top:8px;">
+              Try improving your code by making it easier to read.
+            </p>
+
+            <ul style="margin:8px 0 0 20px;">
+              <li>Use descriptive variable names.</li>
+              <li>Keep functions focused on one task.</li>
+              <li>Add comments only where the logic may be difficult to understand.</li>
+              <li>Remove repeated code when possible.</li>
+            </ul>
+
+            <p style="margin-top:8px;">
+              These practices can make your program easier to understand,
+              test, and maintain.
+            </p>
+
+          `;
+
+        } else {
+
+          message = `
+
+            <strong>Improvement Suggestions</strong>
+
+            <ul style="margin:8px 0 0 20px;">
+              <li>Reduce duplication.</li>
+              <li>Improve naming where necessary.</li>
+              <li>Extract reusable logic.</li>
+              <li>Review unnecessary complexity.</li>
+            </ul>
+
+          `;
+
+        }
+
+      }
+
+
+
+      // =====================================================
+      // LEARN
+      // =====================================================
+
+      if (action === "learn") {
+
+        if (currentProfile === "beginner") {
+
+          message = `
+
+            <strong>Learning Assistance</strong>
+
+            <p style="margin-top:8px;">
+              Programming becomes easier when you break a problem
+              into smaller steps.
+            </p>
+
+            <p style="margin-top:6px;">
+              Start by identifying:
+            </p>
+
+            <ol style="margin:8px 0 0 20px;">
+              <li>What input does the program receive?</li>
+              <li>What should the program do with the input?</li>
+              <li>What output should it produce?</li>
+            </ol>
+
+            <p style="margin-top:8px;">
+              Then implement and test one small part at a time.
+            </p>
+
+          `;
+
+        } else {
+
+          message = `
+
+            <strong>Learning Reference</strong>
+
+            <p style="margin-top:8px;">
+              Focus on the relevant API, algorithm, data structure,
+              or language feature required by the current task.
+            </p>
+
+          `;
+
+        }
+
+      }
+
+
+
+      // =====================================================
+      // COMPLETE
+      // =====================================================
+
+      if (action === "complete") {
+
+        if (!code) {
+
+          message =
+            "Start writing some code first so the system can simulate code completion.";
+
+        }
+
+        else if (currentProfile === "beginner") {
+
+          message = `
+
+            <strong>Suggested Completion</strong>
+
+            <pre># Example continuation
+result = process_data(data)
+print(result)</pre>
+
+            <p style="margin-top:8px;">
+              This demonstrates beginner-oriented completion.
+              The suggested lines store the result and then display it.
+            </p>
+
+          `;
+
+        } else {
+
+          message = `
+
+            <strong>Suggested Completion</strong>
+
+            <pre>result = process_data(data)
+return result</pre>
+
+          `;
+
+        }
+
+      }
+
 
       responseBox.innerHTML = message;
       responseBox.classList.add("visible");
+
     }
 
-    // ========== EVENT LISTENERS ==========
-    document.getElementById("profileSelect").addEventListener("change", function() {
-      applyAdaptation(this.value);
-    });
 
-    // Simple live feedback while typing (demo only)
-    document.getElementById("codeEditor").addEventListener("input", function() {
-      const feedback = document.getElementById("feedback");
-      if (this.value.length > 10) {
-        if (currentModel.debugging_assistance === "High") {
-          feedback.className = "feedback-area detailed";
-          feedback.innerHTML = "Looking good so far. Remember to keep functions small and focused. Need help? Use the AI buttons.";
-        } else {
-          feedback.className = "feedback-area";
-          feedback.innerHTML = "Code received. No critical issues detected.";
-        }
+
+    // =========================================================
+    // SIMPLE AUTO-FORMATTING DEMONSTRATION
+    // =========================================================
+
+    function formatCode() {
+
+      const editor =
+        document.getElementById("codeEditor");
+
+      const feedback =
+        document.getElementById("feedback");
+
+
+      if (!editor.value.trim()) {
+
+        feedback.className = "feedback-area";
+
+        feedback.innerHTML =
+          "Enter some code before using formatting.";
+
+        return;
+
       }
-    });
 
-    // Initialize with Profile A
+
+      let lines =
+        editor.value.split("\n");
+
+
+      // Remove trailing spaces
+      lines = lines.map(
+        line => line.replace(/\s+$/g, "")
+      );
+
+
+      // Reduce excessive blank lines
+      let formatted = [];
+      let previousBlank = false;
+
+
+      lines.forEach(line => {
+
+        const blank =
+          line.trim() === "";
+
+        if (!(blank && previousBlank)) {
+
+          formatted.push(line);
+
+        }
+
+        previousBlank = blank;
+
+      });
+
+
+      editor.value =
+        formatted.join("\n").trim();
+
+
+      if (currentModel.auto_formatting === "High") {
+
+        feedback.className =
+          "feedback-area detailed";
+
+        feedback.innerHTML =
+          "<strong>Formatting applied.</strong><br>" +
+          "Extra spaces and repeated blank lines were cleaned up. " +
+          "Formatting assistance is set to High for this user.";
+
+      } else {
+
+        feedback.className =
+          "feedback-area";
+
+        feedback.innerHTML =
+          "Basic formatting applied.";
+
+      }
+
+    }
+
+
+
+    // =========================================================
+    // SIMPLE ERROR FEEDBACK
+    // =========================================================
+
+    function analyzeCode() {
+
+      const editor =
+        document.getElementById("codeEditor");
+
+      const feedback =
+        document.getElementById("feedback");
+
+      const code =
+        editor.value;
+
+
+      if (!code.trim()) {
+
+        feedback.className =
+          currentProfile === "beginner"
+            ? "feedback-area detailed"
+            : "feedback-area";
+
+
+        feedback.innerHTML =
+          currentProfile === "beginner"
+            ? "<strong>Detailed assistance is active.</strong><br>Start typing code to receive simulated feedback."
+            : "Concise assistance is active.";
+
+        return;
+
+      }
+
+
+      const openParentheses =
+        (code.match(/\(/g) || []).length;
+
+      const closeParentheses =
+        (code.match(/\)/g) || []).length;
+
+
+      if (openParentheses !== closeParentheses) {
+
+        feedback.className =
+          "feedback-area error";
+
+
+        if (currentProfile === "beginner") {
+
+          feedback.innerHTML =
+            "<strong>Possible syntax issue detected.</strong><br>" +
+            "The number of opening and closing parentheses does not match. " +
+            "Check every '(' and make sure it has a corresponding ')'.";
+
+        } else {
+
+          feedback.innerHTML =
+            "Possible syntax issue: unmatched parentheses.";
+
+        }
+
+        return;
+
+      }
+
+
+      if (code.length > 10) {
+
+        if (currentProfile === "beginner") {
+
+          feedback.className =
+            "feedback-area detailed";
+
+          feedback.innerHTML =
+            "<strong>No basic issue detected.</strong><br>" +
+            "Keep your code organized and test it one step at a time. " +
+            "Use Explain, Fix, or Learn if you need additional help.";
+
+        } else {
+
+          feedback.className =
+            "feedback-area";
+
+          feedback.innerHTML =
+            "No basic issue detected.";
+
+        }
+
+      }
+
+    }
+
+
+
+    // =========================================================
+    // CLEAR EDITOR
+    // =========================================================
+
+    function clearEditor() {
+
+      document.getElementById("codeEditor").value = "";
+
+      document.getElementById("aiResponse")
+        .classList.remove("visible");
+
+      applyAdaptation(currentProfile);
+
+    }
+
+
+
+    // =========================================================
+    // DARK / LIGHT MODE
+    // =========================================================
+
+    function toggleTheme() {
+
+      document.body.classList.toggle("dark");
+
+      const button =
+        document.getElementById("themeButton");
+
+
+      if (document.body.classList.contains("dark")) {
+
+        button.textContent =
+          "Light Mode";
+
+      } else {
+
+        button.textContent =
+          "Dark Mode";
+
+      }
+
+    }
+
+
+
+    // =========================================================
+    // EVENT LISTENERS
+    // =========================================================
+
+    document
+      .getElementById("profileSelect")
+      .addEventListener(
+        "change",
+        function () {
+
+          applyAdaptation(this.value);
+
+        }
+      );
+
+
+    document
+      .getElementById("codeEditor")
+      .addEventListener(
+        "input",
+        analyzeCode
+      );
+
+
+
+    // =========================================================
+    // INITIALIZE
+    // =========================================================
+
     applyAdaptation("beginner");
+
   </script>
+
 </body>
+
 </html>
